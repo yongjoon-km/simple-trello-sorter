@@ -11,7 +11,7 @@ sortButton.addEventListener("click", async () => {
 
 function sortTrelloCards() {
   const listCards = document.getElementsByClassName("list-cards");
-  
+
   for (let listCard of listCards) {
     sortListCard(listCard);
   }
@@ -24,12 +24,14 @@ function sortTrelloCards() {
     const cardMap = new Map();
 
     for (let card of listCard.children) {
-      const avatar = card.getElementsByClassName('member-avatar')
-      const memberIds = Object.keys(avatar).length ? avatar[0].alt : null
+      const avatar = card.getElementsByClassName("member-avatar");
+      const memberIds = Object.keys(avatar).length
+        ? [...avatar].map((x) => x.alt)
+        : null;
       cardMap.set(card, memberIds);
     }
     const sortedCard = [...cardMap.entries()].sort(comparator);
-    listCard.replaceChildren(...sortedCard.map(x => x[0]));
+    listCard.replaceChildren(...sortedCard.map((x) => x[0]));
   }
 
   function comparator(a, b) {
@@ -39,7 +41,10 @@ function sortTrelloCards() {
     if (b[1] === null) {
       return -1;
     }
+    if (a[1].length !== b[1].length) {
+      return b[1].length - a[1].length;
+    }
 
-    return b[1].localeCompare(a[1]);
+    return b[1][0].localeCompare(a[1][0]);
   }
 }
